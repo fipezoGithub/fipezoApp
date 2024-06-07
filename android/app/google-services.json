@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191010881172",
+    "project_id": "fipezo-145a9",
+    "storage_bucket": "fipezo-145a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191010881172:android:56c6f0b01a9f6c76cffe81",
+        "android_client_info": {
+          "package_name": "com.fipezo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVrAqBEEcBXkMiX4WbswQtRTVfyh5D6zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
