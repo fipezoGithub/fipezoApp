@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import DocumentPicker from 'react-native-document-picker';
 import {SERVER_URL} from '@env';
 import {vw, vh} from 'react-native-viewport-units';
@@ -31,7 +31,12 @@ const ClientSignup = ({navigation, gooleSignin}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
-  const [otp, setOTP] = useState('');
+  const [otp1, setOTP1] = useState('');
+  const [otp2, setOTP2] = useState('');
+  const [otp3, setOTP3] = useState('');
+  const [otp4, setOTP4] = useState('');
+  const [otp5, setOTP5] = useState('');
+  const [otp6, setOTP6] = useState('');
   const [count, setCount] = useState(120);
   const [timerId, setTimerId] = useState(null);
   const [proImg, setProImg] = useState('');
@@ -45,6 +50,13 @@ const ClientSignup = ({navigation, gooleSignin}) => {
   });
 
   const {dispatch} = useContext(AuthContext);
+
+  const otp1Ref = useRef(null);
+  const otp2Ref = useRef(null);
+  const otp3Ref = useRef(null);
+  const otp4Ref = useRef(null);
+  const otp5Ref = useRef(null);
+  const otp6Ref = useRef(null);
 
   const startCountdown = () => {
     setCount(120);
@@ -87,11 +99,11 @@ const ClientSignup = ({navigation, gooleSignin}) => {
   };
 
   async function checkEmail() {
-    if (firstName.length > 0) {
+    if (firstName.length < 0) {
       setHasErrors(prev => ({...prev, firstNameError: true}));
       return;
     }
-    if (lastName.length > 0) {
+    if (lastName.length < 0) {
       setHasErrors(prev => ({...prev, lastNameError: true}));
       return;
     }
@@ -99,11 +111,11 @@ const ClientSignup = ({navigation, gooleSignin}) => {
       setHasErrors(prev => ({...prev, phoneError: true}));
       return;
     }
-    if (!email.includes('@') || email.length > 0) {
+    if (!email.includes('@') || email.length < 0) {
       setHasErrors(prev => ({...prev, emailError: true}));
       return;
     }
-    if (password.length > 7) {
+    if (password.length < 7) {
       setHasErrors(prev => ({...prev, passwordError: true}));
       return;
     }
@@ -166,7 +178,7 @@ const ClientSignup = ({navigation, gooleSignin}) => {
     formData.append('phone', phone);
     formData.append('profilePicture', proImg);
     formData.append('type', 'user');
-    formData.append('otp', otp);
+    formData.append('otp', `${otp1}${otp2}${otp3}${otp4}${otp5}${otp6}`);
     try {
       const response = await fetch(`${SERVER_URL}/otp/signup`, {
         method: 'POST',
@@ -293,7 +305,7 @@ const ClientSignup = ({navigation, gooleSignin}) => {
               inputMode="text"
               value={lastName}
               onChangeText={text => {
-                setHasErrors(prev => ({...prev, lastNameError: true}));
+                setHasErrors(prev => ({...prev, lastNameError: false}));
                 setLastName(text);
               }}
               placeholderTextColor="#a3a3a3"
@@ -380,7 +392,7 @@ const ClientSignup = ({navigation, gooleSignin}) => {
                 inputMode="numeric"
                 value={phone}
                 onChangeText={text => {
-                  setHasErrors(prev => ({...prev, phoneError: true}));
+                  setHasErrors(prev => ({...prev, phoneError: false}));
                   setPhone(text);
                 }}
               />
@@ -425,13 +437,78 @@ const ClientSignup = ({navigation, gooleSignin}) => {
             <Text style={{fontSize: 6 * vw}} className="font-bold text-black">
               1 step remaining
             </Text>
-            <TextInput
-              placeholder="Enter your 6 digit otp"
-              value={otp}
-              className="border w-full border-neutral-300 rounded-3xl px-2 py-1"
-              keyboardType="number-pad"
-              onChangeText={text => setOTP(text)}
-            />
+            <View className="flex-row gap-2">
+              <TextInput
+                placeholder=""
+                value={otp1}
+                ref={otp1Ref}
+                className="border border-neutral-300 text-center rounded-xl px-2 py-1"
+                keyboardType="number-pad"
+                autoFocus
+                maxLength={1}
+                onChangeText={text => {
+                  setOTP1(text);
+                  if (text.length === 1) otp2Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp2}
+                ref={otp2Ref}
+                maxLength={1}
+                className="border border-neutral-300 text-center rounded-xl px-2 py-1"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP2(text);
+                  if (text.length === 1) otp3Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp3}
+                ref={otp3Ref}
+                maxLength={1}
+                className="border border-neutral-300 text-center rounded-xl px-2 py-1"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP3(text);
+                  if (text.length === 1) otp4Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp4}
+                ref={otp4Ref}
+                maxLength={1}
+                className="border border-neutral-300 text-center rounded-xl px-2 py-1"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP4(text);
+                  if (text.length === 1) otp5Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp5}
+                ref={otp5Ref}
+                maxLength={1}
+                className="border border-neutral-300 text-center rounded-xl px-2 py-1"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP5(text);
+                  if (text.length === 1) otp6Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp6}
+                ref={otp6Ref}
+                maxLength={1}
+                className="border border-neutral-300 text-center rounded-xl px-2 py-1"
+                keyboardType="number-pad"
+                onChangeText={text => setOTP6(text)}
+              />
+            </View>
             <View className="flex flex-row items-center">
               <Text>OTP is send to +91 {phone} . </Text>
               <Pressable className="" onPress={() => setOtpForm(false)}>

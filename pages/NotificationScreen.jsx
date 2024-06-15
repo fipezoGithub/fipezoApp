@@ -9,13 +9,13 @@ import {FAB} from 'react-native-paper';
 
 const NotificationScreen = () => {
   const [notifications, setNotifications] = useState([]);
-  const {authData, dispatch} = useContext(AuthContext);
+  const {authData} = useContext(AuthContext);
   const {userDetails, userType} = authData;
 
   useEffect(() => {
     async function getNotifications() {
       const res = await fetch(
-        `${SERVER_URL}/notification/${userDetails._id}?type=${userType}`,
+        `${SERVER_URL}/notification/${userDetails?._id}?type=${userType}`,
         {
           method: 'GET',
           headers: {
@@ -38,7 +38,7 @@ const NotificationScreen = () => {
   const seenAllNoti = async () => {
     try {
       const res = await fetch(
-        `${SERVER_URL}/notification/seenall/${userDetails._id}?type=${userType}`,
+        `${SERVER_URL}/notification/seenall/${userDetails?._id}?type=${userType}`,
         {
           method: 'PUT',
           headers: {

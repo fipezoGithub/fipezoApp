@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import Iconmail from 'react-native-vector-icons/Feather';
 import Iconphone from 'react-native-vector-icons/AntDesign';
 import Icongoogle from 'react-native-vector-icons/AntDesign';
@@ -16,11 +16,11 @@ import Iconfacebook from 'react-native-vector-icons/FontAwesome';
 import {SERVER_URL} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthContext} from '../context/AuthContext';
-import SMSRetriever from 'react-native-sms-retriever';
 import {HelperText} from 'react-native-paper';
 import {LoginManager} from 'react-native-fbsdk';
 import {vw, vh} from 'react-native-viewport-units';
 import ForgetPassword from '../components/ForgetPassword';
+import {getHash, removeListener, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
 
 const LoginScreen = ({navigation, gooleSignin}) => {
   const [loginPhone, setLoginPhone] = useState(false);
@@ -32,7 +32,12 @@ const LoginScreen = ({navigation, gooleSignin}) => {
   const [phone, setPhone] = useState('');
   const [sendOTP, setSendOTP] = useState(false);
   const [otpError, setOtpError] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otp1, setOTP1] = useState('');
+  const [otp2, setOTP2] = useState('');
+  const [otp3, setOTP3] = useState('');
+  const [otp4, setOTP4] = useState('');
+  const [otp5, setOTP5] = useState('');
+  const [otp6, setOTP6] = useState('');
   const [count, setCount] = useState(30);
   const [timerId, setTimerId] = useState(null);
   const [forgetPasswordModal, setForgetPasswordModal] = useState(false);
@@ -40,6 +45,13 @@ const LoginScreen = ({navigation, gooleSignin}) => {
 
   const translateXEmail = useRef(new Animated.Value(500)).current;
   const translateXPhone = useRef(new Animated.Value(500)).current;
+
+  const otp1Ref = useRef(null);
+  const otp2Ref = useRef(null);
+  const otp3Ref = useRef(null);
+  const otp4Ref = useRef(null);
+  const otp5Ref = useRef(null);
+  const otp6Ref = useRef(null);
 
   const {dispatch} = useContext(AuthContext);
 
@@ -164,7 +176,6 @@ const LoginScreen = ({navigation, gooleSignin}) => {
       }
       setSendOTP(true);
       startCountdown();
-      retrieveOTP();
     } catch (error) {
       console.error(error);
     }
@@ -182,7 +193,7 @@ const LoginScreen = ({navigation, gooleSignin}) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            otp: otp,
+            otp: `${otp1}${otp2}${otp3}${otp4}${otp5}${otp6}`,
             phone: phone,
             type: 'login',
           }),
@@ -198,24 +209,38 @@ const LoginScreen = ({navigation, gooleSignin}) => {
     }
   };
 
-  const retrieveOTP = async () => {
-    try {
-      const registered = await SMSRetriever.startSmsRetriever();
-      if (registered) {
-        SMSRetriever.addSmsListener(event => {
-          if (event.message) {
-            const getotp = event.message.match(/\d{6}/)[0]; // Extract 6-digit OTP
-            console.log('OTP:', getotp);
-            setOtp(getotp);
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Failed to start SMS retriever', error);
-    } finally {
-      SMSRetriever.removeSmsListener();
-    }
-  };
+  const {hash, otp, message, timeoutError, stopListener, startListener} =
+    useOtpVerify({numberOfDigits: 6});
+
+  useEffect(() => {
+    // getHash()
+    //   .then(hash => {
+    //     console.log(hash);
+    //   })
+    //   .catch(console.log);
+
+    startOtpListener(message => {
+      // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
+      const otp = /(\d{6})/g.exec(message)[1];
+      otp.split('').map((item, index) => {
+        if (index === 0) {
+          setOTP1(item);
+        } else if (index === 1) {
+          setOTP2(item);
+        } else if (index === 2) {
+          setOTP3(item);
+        } else if (index === 3) {
+          setOTP4(item);
+        } else if (index === 4) {
+          setOTP5(item);
+        } else if (index === 5) {
+          setOTP6(item);
+        }
+      });
+    });
+
+    return () => removeListener();
+  }, []);
 
   return (
     <KeyboardAvoidingView style={{flex: 1}} behavior="height">
@@ -295,7 +320,7 @@ const LoginScreen = ({navigation, gooleSignin}) => {
           <Animated.View
             style={{
               transform: [{translateX: translateXPhone}],
-              minHeight: 40 * vh,
+              minHeight: 35 * vh,
               position: 'absolute',
               bottom: 25 * vh,
               left: 0,
@@ -344,70 +369,135 @@ const LoginScreen = ({navigation, gooleSignin}) => {
               }}
             />
             <View style={{alignItems: 'center', width: '100%'}}>
-              <TextInput
-                placeholder="eg:1234567890"
-                maxLength={10}
-                style={{
-                  width: '75%',
-                  fontSize: 18,
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#737373',
-                  paddingLeft: 8,
-                  color: '#000',
-                  marginBottom: 16,
-                }}
-                value={phone}
-                placeholderTextColor="#000"
-                onChangeText={text => {
-                  setOtpError(false);
-                  setPhone(text);
-                }}
-                keyboardType="numeric"
-              />
+              {!sendOTP && (
+                <TextInput
+                  placeholder="1234567890"
+                  maxLength={10}
+                  style={{
+                    width: '75%',
+                    fontSize: 18,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#737373',
+                    paddingLeft: 8,
+                    color: '#000',
+                    marginBottom: 16,
+                  }}
+                  value={phone}
+                  placeholderTextColor="#000"
+                  onChangeText={text => {
+                    setOtpError(false);
+                    setPhone(text);
+                  }}
+                  keyboardType="numeric"
+                />
+              )}
               <HelperText
                 type="error"
                 visible={otpError}
                 style={{fontSize: 14, color: '#D32F2F'}}>
                 User not found
               </HelperText>
-              <TextInput
-                placeholder="enter OTP"
-                editable={sendOTP}
-                value={otp}
-                placeholderTextColor="#000"
-                onChangeText={text => setOtp(text)}
-                maxLength={6}
-                style={{
-                  width: '75%',
-                  fontSize: 18,
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#737373',
-                  paddingLeft: 8,
-                  color: '#000',
-                  marginBottom: 16,
-                }}
-                keyboardType="numeric"
-              />
-              {!sendOTP ? (
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    color: '#000',
-                    alignSelf: 'flex-end',
-                    marginBottom: 16,
-                  }}>
-                  {count}s
-                </Text>
-              ) : (
-                <TouchableOpacity
-                  style={{alignSelf: 'flex-end', marginBottom: 16}}>
-                  <Text
-                    style={{fontSize: 16, fontWeight: 'bold', color: '#000'}}>
-                    Resend OTP
-                  </Text>
-                </TouchableOpacity>
+              {sendOTP && (
+                <View className="flex-row gap-2">
+                  <TextInput
+                    placeholder=""
+                    value={otp1}
+                    ref={otp1Ref}
+                    maxLength={1}
+                    autoFocus
+                    className="border border-neutral-500 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                    placeholderTextColor="#a3a3a3"
+                    keyboardType="number-pad"
+                    onChangeText={text => {
+                      setOTP1(text);
+                      if (text.length === 1) otp2Ref.current.focus();
+                    }}
+                  />
+                  <TextInput
+                    placeholder=""
+                    value={otp2}
+                    ref={otp2Ref}
+                    maxLength={1}
+                    className="border border-neutral-500 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                    placeholderTextColor="#a3a3a3"
+                    keyboardType="number-pad"
+                    onChangeText={text => {
+                      setOTP2(text);
+                      if (text.length === 1) otp3Ref.current.focus();
+                    }}
+                  />
+                  <TextInput
+                    placeholder=""
+                    value={otp3}
+                    ref={otp3Ref}
+                    maxLength={1}
+                    className="border border-neutral-500 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                    placeholderTextColor="#a3a3a3"
+                    keyboardType="number-pad"
+                    onChangeText={text => {
+                      setOTP3(text);
+                      if (text.length === 1) otp4Ref.current.focus();
+                    }}
+                  />
+                  <TextInput
+                    placeholder=""
+                    value={otp4}
+                    ref={otp4Ref}
+                    maxLength={1}
+                    className="border border-neutral-500 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                    placeholderTextColor="#a3a3a3"
+                    keyboardType="number-pad"
+                    onChangeText={text => {
+                      setOTP4(text);
+                      if (text.length === 1) otp5Ref.current.focus();
+                    }}
+                  />
+                  <TextInput
+                    placeholder=""
+                    value={otp5}
+                    ref={otp5Ref}
+                    maxLength={1}
+                    className="border border-neutral-500 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                    placeholderTextColor="#a3a3a3"
+                    keyboardType="number-pad"
+                    onChangeText={text => {
+                      setOTP5(text);
+                      if (text.length === 1) otp6Ref.current.focus();
+                    }}
+                  />
+                  <TextInput
+                    placeholder=""
+                    value={otp6}
+                    ref={otp6Ref}
+                    maxLength={1}
+                    className="border border-neutral-500 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                    placeholderTextColor="#a3a3a3"
+                    keyboardType="number-pad"
+                    onChangeText={text => setOTP6(text)}
+                  />
+                </View>
               )}
+              {sendOTP &&
+                (count >= 0 ? (
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 'bold',
+                      color: '#000',
+                      alignSelf: 'flex-end',
+                      marginBottom: 16,
+                    }}>
+                    {count}s
+                  </Text>
+                ) : (
+                  <TouchableOpacity
+                    style={{alignSelf: 'flex-end', marginBottom: 16}}>
+                    <Text
+                      style={{fontSize: 16, fontWeight: 'bold', color: '#000'}}>
+                      Resend OTP
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               <TouchableOpacity
                 onPress={handelPhoneLogin}
                 style={{

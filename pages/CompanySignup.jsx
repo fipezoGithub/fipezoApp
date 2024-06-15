@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import DocumentPicker from 'react-native-document-picker';
 import Icongoogle from 'react-native-vector-icons/AntDesign';
 import Iconfacebook from 'react-native-vector-icons/FontAwesome';
@@ -24,6 +24,7 @@ import {SERVER_URL} from '@env';
 import {AuthContext} from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PopupWaiting from '../components/PopupWaiting';
+import { removeListener, startOtpListener, useOtpVerify } from 'react-native-otp-verify';
 
 const CompanySignup = ({navigation, gooleSignin}) => {
   const [phoneInputFocus, setPhoneInputFocus] = useState(false);
@@ -51,7 +52,12 @@ const CompanySignup = ({navigation, gooleSignin}) => {
     useState('');
   const [companyMsmeCertificate, setCompanyMsmeCertificate] = useState('');
   const [workImages, setWorkImages] = useState([]);
-  const [otp, setOTP] = useState('');
+  const [otp1, setOTP1] = useState('');
+  const [otp2, setOTP2] = useState('');
+  const [otp3, setOTP3] = useState('');
+  const [otp4, setOTP4] = useState('');
+  const [otp5, setOTP5] = useState('');
+  const [otp6, setOTP6] = useState('');
   const [currentStage, setCurrentStage] = useState(0);
   const [count, setCount] = useState(120);
   const [timerId, setTimerId] = useState(null);
@@ -73,6 +79,13 @@ const CompanySignup = ({navigation, gooleSignin}) => {
     profilePictureError: false,
     coverPictureError: false,
   });
+
+  const otp1Ref = useRef(null);
+  const otp2Ref = useRef(null);
+  const otp3Ref = useRef(null);
+  const otp4Ref = useRef(null);
+  const otp5Ref = useRef(null);
+  const otp6Ref = useRef(null);
 
   const cities = [
     'Agra',
@@ -428,7 +441,7 @@ const CompanySignup = ({navigation, gooleSignin}) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          otp: otp,
+          otp: `${otp1}${otp2}${otp3}${otp4}${otp5}${otp6}`,
           phone: companyPhone,
           type: 'company',
         }),
@@ -492,6 +505,39 @@ const CompanySignup = ({navigation, gooleSignin}) => {
       setSignupFailed(true);
     }
   };
+
+  const {hash, otp, message, timeoutError, stopListener, startListener} =
+    useOtpVerify({numberOfDigits: 6});
+
+  useEffect(() => {
+    // getHash()
+    //   .then(hash => {
+    //     console.log(hash);
+    //   })
+    //   .catch(console.log);
+
+    startOtpListener(message => {
+      // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
+      const otp = /(\d{6})/g.exec(message)[1];
+      otp.split('').map((item, index) => {
+        if (index === 0) {
+          setOTP1(item);
+        } else if (index === 1) {
+          setOTP2(item);
+        } else if (index === 2) {
+          setOTP3(item);
+        } else if (index === 3) {
+          setOTP4(item);
+        } else if (index === 4) {
+          setOTP5(item);
+        } else if (index === 5) {
+          setOTP6(item);
+        }
+      });
+    });
+
+    return () => removeListener();
+  }, []);
 
   return (
     <ScrollView
@@ -1201,13 +1247,84 @@ const CompanySignup = ({navigation, gooleSignin}) => {
             <Text style={{fontSize: 6 * vw}} className="font-bold text-black">
               1 step remaining
             </Text>
-            <TextInput
-              placeholder="Enter your 6 digit otp"
-              value={otp}
-              className="border w-full border-neutral-300 rounded-3xl px-2 py-1"
-              keyboardType="number-pad"
-              onChangeText={text => setOTP(text)}
-            />
+            <View className="flex-row gap-2">
+              <TextInput
+                placeholder=""
+                value={otp1}
+                ref={otp1Ref}
+                maxLength={1}
+                autoFocus
+                className="border border-neutral-300 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                placeholderTextColor="#a3a3a3"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP1(text);
+                  if (text.length === 1) otp2Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp2}
+                ref={otp2Ref}
+                maxLength={1}
+                className="border border-neutral-300 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                placeholderTextColor="#a3a3a3"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP2(text);
+                  if (text.length === 1) otp3Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp3}
+                ref={otp3Ref}
+                maxLength={1}
+                className="border border-neutral-300 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                placeholderTextColor="#a3a3a3"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP3(text);
+                  if (text.length === 1) otp4Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp4}
+                ref={otp4Ref}
+                maxLength={1}
+                className="border border-neutral-300 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                placeholderTextColor="#a3a3a3"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP4(text);
+                  if (text.length === 1) otp5Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp5}
+                ref={otp5Ref}
+                maxLength={1}
+                className="border border-neutral-300 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                placeholderTextColor="#a3a3a3"
+                keyboardType="number-pad"
+                onChangeText={text => {
+                  setOTP5(text);
+                  if (text.length === 1) otp6Ref.current.focus();
+                }}
+              />
+              <TextInput
+                placeholder=""
+                value={otp6}
+                ref={otp6Ref}
+                maxLength={1}
+                className="border border-neutral-300 rounded-xl px-2 py-1 text-neutral-800 text-center"
+                placeholderTextColor="#a3a3a3"
+                keyboardType="number-pad"
+                onChangeText={text => setOTP6(text)}
+              />
+            </View>
             <View className="flex flex-row items-center">
               <Text>OTP is send to +91 {companyPhone} . </Text>
               <Pressable className="" onPress={() => setOtpForm(false)}>

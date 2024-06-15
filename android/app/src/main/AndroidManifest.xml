@@ -20,6 +20,7 @@
       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_foreground" android:value="false"/>
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color" android:resource="@color/white"/> 
+      <meta-data  android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_launcher" />
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver" android:exported="false">
@@ -47,6 +48,12 @@
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <intent-filter android:label="filter_react_native">
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="fipezo" android:host="open" />
         </intent-filter>
       </activity>
     </application>

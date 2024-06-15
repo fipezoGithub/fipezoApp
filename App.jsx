@@ -11,7 +11,7 @@ import CompanySignup from './pages/CompanySignup';
 import Loader from './components/Loader';
 import {AuthContext} from './context/AuthContext';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {Alert, BackHandler, Platform} from 'react-native';
+import {Alert, BackHandler, Linking, Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import PushNotification from 'react-native-push-notification';
 import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
@@ -52,6 +52,7 @@ import FreelancerAppliedJobs from './pages/FreelancerAppliedJobs';
 import ChatScreen from './pages/ChatScreen';
 import ChatListScreen from './pages/ChatListScreen';
 import DrawerNav from './components/DrawerNav';
+import {displayNotification} from './utils/notifee';
 
 function App() {
   const [isNewUser, setIsNewUser] = useState(false);
@@ -113,15 +114,17 @@ function App() {
   useEffect(() => {
     socket.on('messageResponse', data => {
       const message = JSON.parse(data.messages[data.messages.length - 1]);
-      console.log(message);
       let thisSender = message.sender;
       let senderId;
       if (data.hasOwnProperty(thisSender)) {
         senderId = Object.getOwnPropertyDescriptor(data, thisSender);
       }
-      if (senderId.value === authData.userDetails._id) {
-        sendNotification();
+      if (senderId.value === authData.userDetails?._id) {
+        // sendNotification();
       }
+    });
+    socket.on('notifications', data => {
+      displayNotification(data);
     });
   }, [socket]);
 
@@ -155,11 +158,35 @@ function App() {
     getNotificationPermission();
   }, []);
 
+  Linking.getInitialURL().then(url => {
+    if (url) {
+      Alert.alert('Initial URL', url);
+    }
+    return null;
+  });
+
+  useEffect(() => {
+    Linking.addEventListener('url', ({url}) => {
+      // Handle the URL here, e.g., navigate to a specific screen
+      Alert.alert('URL Opened', url);
+    });
+
+    // Check if the app was opened from a URL
+
+    // Remember to remove the listener when the component unmounts
+    return () => {
+      Linking.removeEventListener('url');
+    };
+  }, []);
+
   const Stack = createStackNavigator();
 
   GoogleSignin.configure({
     androidClientId:
       '534873725876-o3bugrtbidr3rh2l8leb83e0esp1ofqk.apps.googleusercontent.com',
+    webClientId:
+      '534873725876-r2377ko8osj60e1pqt2copbmtih0f8c0.apps.googleusercontent.com',
+    offlineAccess: true,
   });
 
   if (isLoading) {

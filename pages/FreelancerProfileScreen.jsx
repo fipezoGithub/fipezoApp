@@ -254,7 +254,10 @@ const FreelancerProfileScreen = ({route, navigation}) => {
           <Text
             className="font-bold text-white capitalize ml-2"
             style={{fontSize: 4.5 * vw}}>
-            {freelancer.location}
+            {freelancer.location
+              ?.split('_')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ')}
           </Text>
         </View>
         <View className="flex flex-row items-center bg-red-500 py-1 px-2 rounded-md mx-1">

@@ -556,7 +556,7 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
                     hire request
                   </Text>
                 </TouchableOpacity>
-                {userType === 'freelancer' && (
+                {/* {userType === 'freelancer' && (
                   <TouchableOpacity className="p-2 border-b-[0.5px] border-slate-400 flex flex-row items-center gap-x-4">
                     <View className="bg-[#f3f4f7] p-2 rounded-full">
                       <Iconcrown
@@ -569,7 +569,7 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
                       update portfolio
                     </Text>
                   </TouchableOpacity>
-                )}
+                )} */}
                 <TouchableOpacity
                   onPress={() => {
                     setShowModal(false);
