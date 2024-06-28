@@ -157,7 +157,7 @@ const FreelancerProfileScreen = ({route, navigation}) => {
   }, [freelancer]);
 
   if (isLoading) {
-    return <Loader />; // Or a loading indicator
+    return <Loader />; 
   }
 
   return (
@@ -172,6 +172,7 @@ const FreelancerProfileScreen = ({route, navigation}) => {
         showHideTransition={'fade'}
         hidden={false}
       />
+
       <View
         style={{
           aspectRatio: 1 * 1.7,
@@ -321,6 +322,7 @@ const FreelancerProfileScreen = ({route, navigation}) => {
           {freelancer.bio}
         </Text>
       </View>
+      
       {freelancer.services && freelancer.services.length > 0 && (
         <View className="flex flex-col gap-y-2 items-start justify-between mx-4">
           <Text
@@ -340,6 +342,7 @@ const FreelancerProfileScreen = ({route, navigation}) => {
           </View>
         </View>
       )}
+
       <View className="flex flex-row items-center justify-center mx-4 bg-blue-500 rounded-lg">
         <Text
           style={{fontSize: 4 * vw}}
@@ -382,10 +385,10 @@ const FreelancerProfileScreen = ({route, navigation}) => {
             'Day'}
         </Text>
       </View>
-      {authData.userDetails.uid !== uid && (
+
+      {authData.isLoggedIn && authData.userDetails.uid !== uid && (
         <View className="flex flex-row items-center justify-between mx-6">
           <TouchableOpacity
-            disabled={authData.userType === 'freelancer'}
             className="flex flex-row items-center gap-x-2 bg-green-500 px-2 py-0.5 rounded-lg"
             onPress={() =>
               navigation.navigate('hire-freelancer', {pageData: freelancer})
@@ -410,6 +413,32 @@ const FreelancerProfileScreen = ({route, navigation}) => {
           </TouchableOpacity>
         </View>
       )}
+
+      {!authData.isLoggedIn && (
+        <View className="flex flex-row items-center justify-between mx-6">
+          <TouchableOpacity
+            className="flex flex-row items-center gap-x-2 bg-green-500 px-2 py-0.5 rounded-lg"
+            onPress={() => navigation.navigate('GetStarted')}>
+            <Iconhire name="user-check" size={4.4 * vw} color="#fff" />
+            <Text
+              className="font-semibold text-white capitalize"
+              style={{fontSize: 4.4 * vw}}>
+              hire me
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex flex-row items-center gap-x-2 bg-amber-500 px-2 py-0.5 rounded-lg"
+            onPress={() => navigation.navigate('GetStarted')}>
+            <Iconrate name="star" size={4.4 * vw} color="#fff" />
+            <Text
+              className="font-semibold text-white capitalize"
+              style={{fontSize: 4.4 * vw}}>
+              give rating
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <ScrollView
         nestedScrollEnabled
         stickyHeaderIndices={[0]}
@@ -525,6 +554,7 @@ const FreelancerProfileScreen = ({route, navigation}) => {
             ))
           ))}
       </ScrollView>
+
       <ReviewForm
         showReviewForm={showReviewForm}
         setShowReviewForm={setShowReviewForm}

@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
-import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useRoute} from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 import {vw} from 'react-native-viewport-units';
 import Iconrupee from 'react-native-vector-icons/FontAwesome';
@@ -64,6 +64,10 @@ const JobDetailsScreen = ({navigation}) => {
   }
 
   const applyJob = async () => {
+    if (!authData.isLoggedIn) {
+      navigation.navigate('GetStarted');
+      return;
+    }
     try {
       setIsApplied(true);
       const token = await AsyncStorage.getItem('token');
@@ -122,6 +126,10 @@ const JobDetailsScreen = ({navigation}) => {
   };
 
   const createChatRoom = async () => {
+    if (!authData.isLoggedIn) {
+      navigation.navigate('GetStarted');
+      return;
+    }
     try {
       const res = await fetch(`${SERVER_URL}/createmessagebox`, {
         method: 'POST',

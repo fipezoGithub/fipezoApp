@@ -105,7 +105,7 @@ const MyReferal = ({navigation}) => {
       </View>
       <View className="flex flex-col items-center gap-y-4 mx-4">
         <Text style={{fontSize: 4.5 * vw}} className="text-black font-medium">
-          Your current successfull refer{' '}
+          Your current successful refer{' '}
         </Text>
         <Text
           style={{fontSize: 7 * vw}}

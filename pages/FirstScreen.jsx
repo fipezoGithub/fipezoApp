@@ -10,12 +10,10 @@ import {
 import React, {useRef, useState} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {vw, vh} from 'react-native-viewport-units';
+import {vw} from 'react-native-viewport-units';
 
 const FirstScreen = ({navigation}) => {
   const scroll = useRef();
-  const [pos, setPos] = useState();
-  const [scrollPos, setScrollPos] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
   const setNewUser = async () => {

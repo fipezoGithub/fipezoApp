@@ -1,6 +1,6 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {vw, vh} from 'react-native-viewport-units';
+import React, {useState} from 'react';
+import {vw} from 'react-native-viewport-units';
 import FAQAccordian from '../components/FAQAccordian';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 

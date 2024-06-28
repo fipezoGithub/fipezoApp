@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {vw, vh} from 'react-native-viewport-units';
 import FastImage from 'react-native-fast-image';
 import Iconfingerprint from 'react-native-vector-icons/Entypo';

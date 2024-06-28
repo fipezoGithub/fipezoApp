@@ -10,11 +10,9 @@ import {
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {vw, vh} from 'react-native-viewport-units';
 import Iconeye from 'react-native-vector-icons/Entypo';
-import SelectDropdown from 'react-native-select-dropdown';
 import Iconcamera from 'react-native-vector-icons/AntDesign';
 import {AuthContext} from '../context/AuthContext';
 import {SERVER_URL, BUCKET_URL} from '@env';
-import {Chip} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EditCompanyProfile = ({ navigation}) => {

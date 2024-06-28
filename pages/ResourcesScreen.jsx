@@ -91,6 +91,7 @@ const ResourcesScreen = ({navigation}) => {
         nestedScrollEnabled
         contentContainerStyle={{
           backgroundColor: '#ffffff',
+          paddingBottom: 6 * vh,
         }}>
         <StatusBar
           animated={true}

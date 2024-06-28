@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CheckBox from '@react-native-community/checkbox';
 import JobCard from '../components/JobCard';
 import {SERVER_URL} from '@env';
@@ -30,78 +30,6 @@ const Jobscreen = ({location}) => {
   const openMenu = () => setVisible(true);
 
   const closeMenu = () => setVisible(false);
-
-  const renderThumb = useCallback(
-    ({name}) => (
-      <View
-        style={
-          name === 'high'
-            ? {
-                width: 16 * 2,
-                height: 16 * 2,
-                borderRadius: 16,
-                borderWidth: 2,
-                borderColor: '#7f7f7f',
-                backgroundColor: '#ffffff',
-              }
-            : {
-                width: 8 * 2,
-                height: 8 * 2,
-                borderRadius: 8,
-                borderWidth: 2,
-                borderColor: '#7f7f7f',
-                backgroundColor: '#00aaff',
-              }
-        }
-      />
-    ),
-    [],
-  );
-
-  const renderRail = useCallback(
-    () => (
-      <View
-        style={{
-          flex: 1,
-          height: 4,
-          borderRadius: 2,
-          backgroundColor: '#000000',
-        }}
-      />
-    ),
-    [],
-  );
-
-  const renderRailSelected = useCallback(
-    () => (
-      <View
-        style={{
-          height: 4,
-          backgroundColor: '#4499ff',
-          borderRadius: 2,
-        }}
-      />
-    ),
-    [],
-  );
-
-  const renderNotch = useCallback(
-    () => (
-      <View
-        style={{
-          width: 8,
-          height: 8,
-          borderLeftColor: 'transparent',
-          borderRightColor: 'transparent',
-          borderTopColor: '#4499ff',
-          borderLeftWidth: 4,
-          borderRightWidth: 4,
-          borderTopWidth: 8,
-        }}
-      />
-    ),
-    [],
-  );
 
   async function getJobs(setFunc) {
     setLoading(true);
@@ -164,7 +92,11 @@ const Jobscreen = ({location}) => {
     <>
       <ScrollView
         nestedScrollEnabled={true}
-        contentContainerStyle={{backgroundColor: '#fff', minHeight: 90 * vh}}>
+        contentContainerStyle={{
+          backgroundColor: '#fff',
+          minHeight: 90 * vh,
+          paddingBottom: 6 * vh,
+        }}>
         <StatusBar
           animated={true}
           backgroundColor="#973931"

@@ -23,6 +23,7 @@ import Iconcity from 'react-native-vector-icons/FontAwesome5';
 import Iconcitytree from 'react-native-vector-icons/FontAwesome6';
 import Iconrule from 'react-native-vector-icons/MaterialIcons';
 import Iconrefund from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconHireReq from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modal';
 import {useNavigation} from '@react-navigation/native';
 import {BUCKET_URL} from '@env';
@@ -120,7 +121,6 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
         type: userType,
       });
       socket.on('notifications', data => {
-        // console.log(data);
         setNotificationCount(data.length);
       });
       userDetails.premium && setPremiumMembers(true);
@@ -134,7 +134,7 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
       dispatch({type: 'logout'});
       navigation.reset({
         index: 0,
-        routes: [{name: 'GetStarted'}],
+        routes: [{name: 'Explore'}],
       });
     } catch (error) {
       console.log(error);
@@ -171,90 +171,103 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
       className={
         'flex flex-row justify-between items-center top-0 z-10 w-full px-2 bg-neutral-50'
       }>
-      {currentRouteName.route.name != 'Explore' &&
-        currentRouteName.route.name != 'Jobs' &&
-        currentRouteName.route.name != 'Learn' &&
-        currentRouteName.route.name != 'Help' && (
-          <TouchableOpacity className="" onPress={() => navigation.goBack()}>
-            <Iconleft name="chevron-left" size={25} color="#000" />
-          </TouchableOpacity>
-        )}
-      <View className="flex">
-        <SelectDropdown
-          data={cities}
-          disabled={
-            currentRouteName.route.name === 'freelancer-profile' ||
-            currentRouteName.route.name === 'company-profile' ||
-            currentRouteName.route.name === 'job-details' ||
-            currentRouteName.route.name === 'resource-details' ||
-            currentRouteName.route.name === 'notifications' ||
-            currentRouteName.route.name === 'edit-profile'
-          }
-          renderCustomizedButtonChild={e => (
-            <View className="flex flex-row items-center gap-x-1">
-              <Iconlocation name="location-pin" size={20} color="#f61841" />
-              <Text className={`text-lg text-black capitalize font-semibold`}>
-                {e ? e : 'Select your city'}
-              </Text>
-              <Icondown name="angle-down" size={20} color="#000000" />
-            </View>
+      <View className="flex-row items-center">
+        {currentRouteName.route.name != 'Explore' &&
+          currentRouteName.route.name != 'Jobs' &&
+          currentRouteName.route.name != 'Learn' &&
+          currentRouteName.route.name != 'Help' && (
+            <TouchableOpacity className="" onPress={() => navigation.goBack()}>
+              <Iconleft name="chevron-left" size={25} color="#000" />
+            </TouchableOpacity>
           )}
-          defaultValue={location}
-          buttonStyle={{
-            backgroundColor: 'transparent',
-            width: 225,
-          }}
-          dropdownStyle={{
-            borderRadius: 10,
-            height: '100%',
-            flex: 1,
-            alignItems: 'stretch',
-            width: 95 * vw,
-            top: 0,
-            left: 0,
-            backgroundColor: '#FFFFFF',
-          }}
-          rowTextStyle={{textTransform: 'capitalize'}}
-          onSelect={(selectedItem, index) => {
-            console.log(selectedItem.split(' ').join('_'), index);
-            setLocation(selectedItem.split(' ').join('_'));
-          }}
-          search={true}
-          searchPlaceHolder={'Enter state name'}
-          renderSearchInputLeftIcon={() => (
-            <Iconsearch name="search1" size={20} color="#000000" />
-          )}
-          renderCustomizedRowChild={(item, index) => (
-            <View className="mx-4 flex flex-row items-center justify-center gap-x-2">
-              {index % 3 === 0 && (
-                <Iconcity name="city" size={23} color="#c0c3cd" />
-              )}
-              {index % 3 === 1 && (
-                <Iconcitytree name="mountain-city" size={23} color="#c0c3cd" />
-              )}
-              {index % 3 === 2 && (
-                <Iconcitytree name="tree-city" size={23} color="#c0c3cd" />
-              )}
-              <Text className="text-lg font-medium text-center text-black">
-                {item}
-              </Text>
-            </View>
-          )}
-          searchInputStyle={{width: 95 * vw, backgroundColor: '#ffffff'}}
-          buttonTextAfterSelection={(selectedItem, index) => {
-            // text represented after item is selected
-            // if data array is an array of objects then return selectedItem.property to render after item is selected
-            return selectedItem;
-          }}
-          rowTextForSelection={(item, index) => {
-            // text represented for each item in dropdown
-            // if data array is an array of objects then return item.property to represent item in dropdown
-            return item;
-          }}
-        />
+        <View className="flex">
+          <SelectDropdown
+            data={cities}
+            disabled={
+              currentRouteName.route.name === 'freelancer-profile' ||
+              currentRouteName.route.name === 'company-profile' ||
+              currentRouteName.route.name === 'job-details' ||
+              currentRouteName.route.name === 'resource-details' ||
+              currentRouteName.route.name === 'notifications' ||
+              currentRouteName.route.name === 'edit-profile'
+            }
+            renderCustomizedButtonChild={e => (
+              <View className="flex flex-row items-center gap-x-1">
+                <Iconlocation name="location-pin" size={20} color="#f61841" />
+                <Text className={`text-lg text-black capitalize font-semibold`}>
+                  {e ? e : 'Select your city'}
+                </Text>
+                <Icondown name="angle-down" size={20} color="#000000" />
+              </View>
+            )}
+            defaultValue={location}
+            buttonStyle={{
+              backgroundColor: 'transparent',
+              width: 225,
+            }}
+            dropdownStyle={{
+              borderRadius: 10,
+              height: '100%',
+              flex: 1,
+              alignItems: 'stretch',
+              width: 95 * vw,
+              top: 0,
+              left: 0,
+              backgroundColor: '#FFFFFF',
+            }}
+            rowTextStyle={{textTransform: 'capitalize'}}
+            onSelect={(selectedItem, index) => {
+              console.log(selectedItem.split(' ').join('_'), index);
+              setLocation(selectedItem.split(' ').join('_'));
+            }}
+            search={true}
+            searchPlaceHolder={'Enter state name'}
+            renderSearchInputLeftIcon={() => (
+              <Iconsearch name="search1" size={20} color="#000000" />
+            )}
+            renderCustomizedRowChild={(item, index) => (
+              <View className="mx-4 flex flex-row items-center justify-center gap-x-2">
+                {index % 3 === 0 && (
+                  <Iconcity name="city" size={23} color="#c0c3cd" />
+                )}
+                {index % 3 === 1 && (
+                  <Iconcitytree
+                    name="mountain-city"
+                    size={23}
+                    color="#c0c3cd"
+                  />
+                )}
+                {index % 3 === 2 && (
+                  <Iconcitytree name="tree-city" size={23} color="#c0c3cd" />
+                )}
+                <Text className="text-lg font-medium text-center text-black">
+                  {item}
+                </Text>
+              </View>
+            )}
+            searchInputStyle={{width: 95 * vw, backgroundColor: '#ffffff'}}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              // text represented after item is selected
+              // if data array is an array of objects then return selectedItem.property to render after item is selected
+              return selectedItem;
+            }}
+            rowTextForSelection={(item, index) => {
+              // text represented for each item in dropdown
+              // if data array is an array of objects then return item.property to represent item in dropdown
+              return item;
+            }}
+          />
+        </View>
       </View>
       <View>
-        <TouchableOpacity onPress={() => setShowModal(true)}>
+        <TouchableOpacity
+          onPress={() => {
+            if (authData.isLoggedIn) {
+              setShowModal(true);
+            } else {
+              navigation.navigate('GetStarted');
+            }
+          }}>
           <FastImage
             source={
               profilePicture
@@ -520,6 +533,25 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
                     </Text>
                   </TouchableOpacity>
                 )}
+                {userType === 'freelancer' && (
+                  <TouchableOpacity
+                    className="p-2 border-b-[0.5px] border-slate-400 flex flex-row items-center gap-x-4"
+                    onPress={() => {
+                      setShowModal(false);
+                      navigation.navigate('my-got-hire-request');
+                    }}>
+                    <View className="bg-[#f3f4f7] p-2 rounded-full">
+                      <IconHireReq
+                        name="product-hunt"
+                        size={23}
+                        color="#c0c3cd"
+                      />
+                    </View>
+                    <Text className="text-lg capitalize text-black font-medium">
+                      my hiring requests
+                    </Text>
+                  </TouchableOpacity>
+                )}
                 {userType === 'company' && (
                   <TouchableOpacity
                     className="p-2 border-b-[0.5px] border-slate-400 flex flex-row items-center gap-x-4"
@@ -553,23 +585,9 @@ const DrawerNav = ({gooleSignin, currentRouteName, setLocation, location}) => {
                     />
                   </View>
                   <Text className="text-lg capitalize text-black font-medium">
-                    hire request
+                    My Hirings
                   </Text>
                 </TouchableOpacity>
-                {/* {userType === 'freelancer' && (
-                  <TouchableOpacity className="p-2 border-b-[0.5px] border-slate-400 flex flex-row items-center gap-x-4">
-                    <View className="bg-[#f3f4f7] p-2 rounded-full">
-                      <Iconcrown
-                        name="file-check-outline"
-                        size={23}
-                        color="#c0c3cd"
-                      />
-                    </View>
-                    <Text className="text-lg capitalize text-black font-medium">
-                      update portfolio
-                    </Text>
-                  </TouchableOpacity>
-                )} */}
                 <TouchableOpacity
                   onPress={() => {
                     setShowModal(false);

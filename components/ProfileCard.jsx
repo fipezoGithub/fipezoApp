@@ -294,12 +294,16 @@ const ProfileCard = ({item, navigation}) => {
               'Day'}
           </Text>
           <TouchableOpacity
-            disabled={authData.userType === 'freelancer'}
+            disabled={authData.userDetails?._id === item._id}
             className="flex flex-row items-center gap-x-2 bg-blue-600 px-2 py-0.5 rounded-lg"
             style={{elevation: 3}}
-            onPress={() =>
-              navigation.navigate('hire-freelancer', {pageData: item})
-            }>
+            onPress={() => {
+              if (authData.isLoggedIn) {
+                navigation.navigate('hire-freelancer', {pageData: item});
+              } else {
+                navigation.navigate('GetStarted');
+              }
+            }}>
             <Iconhire name="user-check" size={4.4 * vw} color="#fff" />
             <Text
               className="font-semibold text-white capitalize"

@@ -11,10 +11,6 @@ import {SERVER_URL, BUCKET_URL} from '@env';
 import {useIsFocused} from '@react-navigation/native';
 import {vw, vh} from 'react-native-viewport-units';
 import Iconrupee from 'react-native-vector-icons/FontAwesome';
-import Iconshare from 'react-native-vector-icons/Entypo';
-import IconTrash from 'react-native-vector-icons/Ionicons';
-import Iconmenu from 'react-native-vector-icons/SimpleLineIcons';
-import Iconedit from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthContext} from '../context/AuthContext';
 

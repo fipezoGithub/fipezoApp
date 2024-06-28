@@ -1,6 +1,6 @@
 import {
   Modal,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   Text,
   TextInput,
@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import Iconclose from 'react-native-vector-icons/MaterialCommunityIcons';
-import {vw, vh} from 'react-native-viewport-units';
+import {vw} from 'react-native-viewport-units';
 import {SERVER_URL} from '@env';
 import {HelperText} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthContext } from '../context/AuthContext';
+import {AuthContext} from '../context/AuthContext';
 
 const ForgetPassword = ({
   forgetPasswordModal,
@@ -27,6 +27,7 @@ const ForgetPassword = ({
   const [otpErr, setOTPErr] = useState(false);
   const [showOTPBox, setShowOTPBox] = useState(false);
   const [showPasswordBox, setShowPasswordBox] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {dispatch} = useContext(AuthContext);
 
@@ -35,6 +36,7 @@ const ForgetPassword = ({
       setPhoneErr(true);
       return;
     }
+    setLoading(true);
     try {
       const res = await fetch(`${SERVER_URL}/otp/forget-password`, {
         method: 'POST',
@@ -45,9 +47,14 @@ const ForgetPassword = ({
       });
       if (res.ok) {
         setShowOTPBox(true);
+      } else {
+        setPhoneErr(true);
       }
     } catch (error) {
       console.log(error);
+      setPhoneErr(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,6 +63,7 @@ const ForgetPassword = ({
       setOTPErr(true);
       return;
     }
+    setLoading(true);
     try {
       const res = await fetch(`${SERVER_URL}/forget-password/submitotp`, {
         method: 'POST',
@@ -71,12 +79,15 @@ const ForgetPassword = ({
       await AsyncStorage.setItem('token', data.token);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const changePassword = async e => {
     const token = await AsyncStorage.getItem('token');
     try {
+      setLoading(true);
       if (password === conPassword) {
         const res = await fetch(`${SERVER_URL}/profile/user/password/change`, {
           method: 'PUT',
@@ -91,9 +102,13 @@ const ForgetPassword = ({
           dispatch({type: 'isLoggedIn'});
           navigation.navigate('TabNav');
         }
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,11 +124,11 @@ const ForgetPassword = ({
         className="flex-1 items-center justify-center"
         style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View className="bg-white rounded-xl px-4 py-2 flex flex-col items-start gap-y-4 relative">
-          <Pressable
+          <TouchableOpacity
             className="absolute right-2"
             onPress={() => setForgetPasswordModal(false)}>
             <Iconclose name="close-thick" size={8 * vw} color="#000" />
-          </Pressable>
+          </TouchableOpacity>
           <View>
             <Text style={{fontSize: 6 * vw}} className="font-bold text-black">
               Retrieve your Password
@@ -153,13 +168,15 @@ const ForgetPassword = ({
                 Phone number is not valid
               </HelperText>
             </View>
-            <Pressable className="bg-black rounded-md" onPress={handelOTP}>
+            <TouchableOpacity
+              className="bg-black rounded-md"
+              onPress={handelOTP}>
               <Text
                 style={{fontSize: 4 * vw}}
                 className="text-white font-bold px-4 py-1">
                 Get OTP
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
           {showOTPBox && (
             <View className="flex items-center">
@@ -195,13 +212,15 @@ const ForgetPassword = ({
                   OTP is not valid
                 </HelperText>
               </View>
-              <Pressable className="bg-black rounded-md" onPress={submitOTP}>
+              <TouchableOpacity
+                className="bg-black rounded-md"
+                onPress={submitOTP}>
                 <Text
                   style={{fontSize: 4 * vw}}
                   className="text-white font-bold capitalize px-4 py-1">
                   submit
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           )}
           {showPasswordBox && (
@@ -248,7 +267,7 @@ const ForgetPassword = ({
                   />
                 </View>
               </View>
-              <Pressable
+              <TouchableOpacity
                 className="bg-black rounded-md"
                 onPress={changePassword}>
                 <Text
@@ -256,7 +275,7 @@ const ForgetPassword = ({
                   className="text-white font-bold capitalize px-4 py-1">
                   submit
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           )}
         </View>

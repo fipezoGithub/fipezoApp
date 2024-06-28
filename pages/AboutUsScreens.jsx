@@ -1,5 +1,5 @@
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {vw, vh} from 'react-native-viewport-units';
 
 const AboutUsScreens = ({navigation}) => {
@@ -17,7 +17,7 @@ const AboutUsScreens = ({navigation}) => {
           rowGap: 15,
           justifyContent: 'center',
           marginHorizontal: 15,
-          paddingVertical: 15 * vw,
+          paddingVertical: 5 * vw,
         }}>
         <View className="flex items-start gap-y-3">
           <Text

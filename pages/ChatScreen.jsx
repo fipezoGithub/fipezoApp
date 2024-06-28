@@ -1,10 +1,9 @@
 import {
-  Pressable,
+  TouchableOpacity,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useContext, useEffect, useRef, useState} from 'react';
@@ -226,11 +225,11 @@ const ChatScreen = ({route, navigation}) => {
             className="border rounded-md border-neutral-500"
             style={{width: 80 * vw}}
           />
-          <Pressable
+          <TouchableOpacity
             className="bg-orange-500 px-4 self-stretch rounded-md flex items-center justify-center"
             onPress={handleSendMessage}>
             <Iconsend name="send" size={5 * vw} color="#fff" />
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

@@ -1,17 +1,13 @@
 import {Animated, ScrollView, StyleSheet, Text, View} from 'react-native';
-import React, {useRef, useContext, useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import {vw, vh} from 'react-native-viewport-units';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SERVER_URL} from '@env';
-import {AuthContext} from '../context/AuthContext';
 import {useIsFocused} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const HireRequest = ({navigation}) => {
-  const [hireRequests, setHireRequests] = useState([]);
   const [hireLists, setHireLists] = useState([]);
-
-  const {authData} = useContext(AuthContext);
 
   const isFocused = useIsFocused();
 
@@ -33,27 +29,10 @@ const HireRequest = ({navigation}) => {
     }).start();
   };
 
-  async function getHireRequests() {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const res = await fetch(`${SERVER_URL}/requests`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        cache: 'no-store',
-      });
-      const resData = await res.json();
-      setHireRequests(resData);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async function getHireList() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const resp = await fetch(`${SERVER_URL}/hires`, {
+      const resp = await fetch(`${SERVER_URL}/hire/premium/user`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -66,21 +45,8 @@ const HireRequest = ({navigation}) => {
     }
   }
 
-  const formatDate = dateStr => {
-    if (dateStr === undefined) {
-      return;
-    }
-    const date = new Date(dateStr);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
   useEffect(() => {
-    if (authData.userType === 'freelancer') getHireRequests();
-    if (authData.userType === 'user' || authData.userType === 'company')
-      getHireList();
+    getHireList();
   }, []);
 
   if (isFocused) {
@@ -95,56 +61,10 @@ const HireRequest = ({navigation}) => {
         <Text
           className="text-black font-semibold capitalize"
           style={{fontSize: 8 * vw}}>
-          my requests
+          my hirings
         </Text>
       </View>
       <View className="flex flex-row flex-wrap items-center justify-center gap-4 mx-2">
-        {hireRequests.length > 0 &&
-          hireRequests.map((item, index) => (
-            <View
-              className="flex gap-y-2 mx-4 border border-neutral-400 px-4 py-2 rounded-md bg-white"
-              key={index}
-              style={{minWidth: 88 * vw, elevation: 5}}>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black">
-                Name: {item.fullname}
-              </Text>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black border border-neutral-400 px-2 py-1">
-                Phone: {item.phone}
-              </Text>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black border border-neutral-400 px-2 py-1">
-                Description: {item.description}
-              </Text>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black border border-neutral-400 px-2 py-1">
-                Address: {item.address}
-              </Text>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black border border-neutral-400 px-2 py-1">
-                Date: {item.date ? formatDate(item.date) : 'Not Applicable'}
-              </Text>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black border border-neutral-400 px-2 py-1">
-                Time:{' '}
-                {item.startTime !== '00:00'
-                  ? item.startTime + ' - ' + item.endTime
-                  : 'Not Applicable'}
-              </Text>
-              <Text
-                style={{fontSize: 5 * vw}}
-                className="font-medium text-black border border-neutral-400 px-2 py-1">
-                Budget: {item.budget}
-              </Text>
-            </View>
-          ))}
         {hireLists.length > 0 &&
           hireLists.map((item, index) => (
             <View
@@ -152,21 +72,27 @@ const HireRequest = ({navigation}) => {
               key={index}
               style={{minWidth: 88 * vw, elevation: 5}}>
               <Text
-                className="capitalize self-end italic rounded-tl-2xl rounded-br-2xl rounded-tr-xl rounded-bl-xl bg-neutral-500 px-4 py-1 text-white"
-                style={{fontSize: 4.5 * vw}}>
-                {item.status}
-              </Text>
-              <Text
                 style={{fontSize: 5 * vw}}
                 className="font-medium text-black">
-                {item.freelancerDetails.firstname +
+                {item.hired_freelancer.firstname
+                  .split('_')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ') +
                   ' ' +
-                  item.freelancerDetails.lastname}
+                  item.hired_freelancer.lastname
+                    .split('_')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')}
                 {' - '}
-                {item.freelancerDetails.profession
+                {item.hired_freelancer.profession
                   .split('_')
                   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
                   .join(' ')}
+              </Text>
+              <Text
+                className="capitalize self-start italic rounded-tl-2xl rounded-br-2xl rounded-tr-xl rounded-bl-xl bg-neutral-500 px-4 py-1 text-white"
+                style={{fontSize: 4.5 * vw}}>
+                {item.status}
               </Text>
               <Text
                 style={{fontSize: 5 * vw}}
@@ -201,13 +127,6 @@ const HireRequest = ({navigation}) => {
                     className="capitalize text-white font-medium"
                     style={{fontSize: 4 * vw}}>
                     cancel
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="px-2 py-1 rounded-lg bg-blue-500">
-                  <Text
-                    className="capitalize text-white font-medium"
-                    style={{fontSize: 4 * vw}}>
-                    message
                   </Text>
                 </TouchableOpacity>
               </View>

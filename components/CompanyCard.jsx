@@ -44,12 +44,12 @@ const CompanyCard = ({company, navigation}) => {
           {company.bio?.slice(0, 150)} {company.bio?.length > 150 && ' ...'}
         </Text>
         <View className="flex flex-row gap-x-4">
-          <Text className="text-lg capitalize text-black">
+          <Text className="text-lg capitalize text-neutral-800 bg-teal-400 rounded-lg px-2 py-0.5">
             {company.companytype} company
           </Text>
-          <View className="flex flex-row items-center gap-x-1">
-            <Iconlocation name="location-dot" size={15} color="#b5c6c9" />
-            <Text className="text-lg text-black">
+          <View className="flex flex-row items-center gap-x-1 bg-orange-500 rounded-lg px-2 py-0.5">
+            <Iconlocation name="location-dot" size={15} color="#fff" />
+            <Text className="text-lg text-neutral-100">
               {JSON.parse(company.companyaddress).city}
             </Text>
           </View>

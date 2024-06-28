@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {vw, vh} from 'react-native-viewport-units';
+import {vw} from 'react-native-viewport-units';
 import {List} from 'react-native-paper';
 
 const FAQAccordian = ({data, expand}) => {

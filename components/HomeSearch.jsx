@@ -5,7 +5,6 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  Pressable,
 } from 'react-native';
 import React, {useState} from 'react';
 import Iconsearch from 'react-native-vector-icons/AntDesign';
@@ -127,7 +126,7 @@ const HomeSearch = ({showModal, setShowModal}) => {
           />
         </View>
         <View className="flex flex-row items-center">
-          <Pressable onPress={() => setShowCategory(true)}>
+          <TouchableOpacity onPress={() => setShowCategory(true)}>
             <View
               className={
                 'flex flex-row items-center gap-x-2 px-4 py-2 border rounded-2xl border-r-0 rounded-r-none ' +
@@ -147,8 +146,8 @@ const HomeSearch = ({showModal, setShowModal}) => {
                 category
               </Text>
             </View>
-          </Pressable>
-          <Pressable onPress={() => setShowCategory(false)}>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowCategory(false)}>
             <View
               className={
                 'flex flex-row items-center gap-x-2 px-4 py-2 border rounded-2xl rounded-l-none ' +
@@ -168,7 +167,7 @@ const HomeSearch = ({showModal, setShowModal}) => {
                 freelancer
               </Text>
             </View>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <View>
           <Text

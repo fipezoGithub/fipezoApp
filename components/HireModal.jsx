@@ -1,6 +1,6 @@
 import {
   Modal,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   Text,
   View,
@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import React, {useState} from 'react';
-import {vw, vh} from 'react-native-viewport-units';
+import {vw} from 'react-native-viewport-units';
 
 const HireModal = () => {
   const [otp, setOTP] = useState('');
@@ -99,13 +99,13 @@ const HireModal = () => {
           />
           <View className="flex flex-row items-center">
             <Text>OTP is send to +91 1234567890 . </Text>
-            <Pressable className="" onPress={() => setOtpForm(false)}>
+            <TouchableOpacity className="" onPress={() => setOtpForm(false)}>
               <Text className="text-blue-500 font-bold capitalize">edit</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
-          <Pressable className="px-4 py-2 bg-blue-500 rounded-3xl">
+          <TouchableOpacity className="px-4 py-2 bg-blue-500 rounded-3xl">
             <Text className="capitalize font-semibold text-white">submit</Text>
-          </Pressable>
+          </TouchableOpacity>
           <Text className="text-neutral-700 self-end">12s</Text>
           <Text className="text-slate-500 font-medium">
             OTP is valid for 5 minutes

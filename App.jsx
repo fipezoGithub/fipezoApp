@@ -53,6 +53,7 @@ import ChatScreen from './pages/ChatScreen';
 import ChatListScreen from './pages/ChatListScreen';
 import DrawerNav from './components/DrawerNav';
 import {displayNotification} from './utils/notifee';
+import MyRequest from './pages/MyRequest';
 
 function App() {
   const [isNewUser, setIsNewUser] = useState(false);
@@ -194,10 +195,7 @@ function App() {
   }
 
   return (
-    <Stack.Navigator
-      initialRouteName={
-        isNewUser ? 'First' : isLoggedIn ? 'Explore' : 'GetStarted'
-      }>
+    <Stack.Navigator initialRouteName={isNewUser ? 'First' : 'Explore'}>
       <Stack.Group screenOptions={{headerShown: false}}>
         <Stack.Screen name="First" component={FirstScreen} />
         <Stack.Screen name="GetStarted" component={GetStartedScreen} />
@@ -311,6 +309,9 @@ function App() {
         </Stack.Screen>
         <Stack.Screen name="hire-freelancer">
           {props => <HireFreelancer {...props} location={location} />}
+        </Stack.Screen>
+        <Stack.Screen name="my-got-hire-request">
+          {props => <MyRequest {...props} location={location} />}
         </Stack.Screen>
         <Stack.Screen name="update-portfolio">
           {props => (

@@ -1,6 +1,6 @@
 import {
   Modal,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   Text,
   TextInput,
@@ -66,11 +66,11 @@ const ReportBox = ({showReportBox, setShowReportBox, freelancer}) => {
         className="flex-1 items-center justify-center"
         style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View className="bg-white px-4 py-2 flex gap-y-4 flex-col items-center mx-6 rounded-lg relative">
-          <Pressable
+          <TouchableOpacity
             className="bg-red-600 self-end absolute -top-[4%] right-0"
             onPress={() => setShowReportBox(false)}>
             <Iconclose name="close" color="#fff" size={4.5 * vw} />
-          </Pressable>
+          </TouchableOpacity>
           <View>
             <Text
               className="text-black font-semibold text-center"
@@ -130,7 +130,7 @@ const ReportBox = ({showReportBox, setShowReportBox, freelancer}) => {
               className="h-20 border"
             />
           </View>
-          <Pressable
+          <TouchableOpacity
             className="py-2 bg-red-600 w-60 rounded-md"
             onPress={submitReport}>
             <Text
@@ -138,7 +138,7 @@ const ReportBox = ({showReportBox, setShowReportBox, freelancer}) => {
               style={{fontSize: 4 * vw}}>
               report
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

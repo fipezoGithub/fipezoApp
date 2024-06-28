@@ -20,7 +20,12 @@ import {HelperText} from 'react-native-paper';
 import {LoginManager} from 'react-native-fbsdk';
 import {vw, vh} from 'react-native-viewport-units';
 import ForgetPassword from '../components/ForgetPassword';
-import {getHash, removeListener, startOtpListener, useOtpVerify} from 'react-native-otp-verify';
+import {
+  removeListener,
+  startOtpListener,
+  useOtpVerify,
+} from 'react-native-otp-verify';
+import Loader from '../components/Loader';
 
 const LoginScreen = ({navigation, gooleSignin}) => {
   const [loginPhone, setLoginPhone] = useState(false);
@@ -92,6 +97,7 @@ const LoginScreen = ({navigation, gooleSignin}) => {
       await gooleSignin.hasPlayServices();
       const userInfo = await gooleSignin.signIn();
       const {user} = userInfo;
+      setLoading(true);
       const response = await fetch(`${SERVER_URL}/email/login/social`, {
         method: 'POST',
         headers: {
@@ -110,10 +116,12 @@ const LoginScreen = ({navigation, gooleSignin}) => {
       } else {
         await AsyncStorage.setItem('token', data.token);
         dispatch({type: 'isLoggedIn'});
+        setLoading(false);
         navigation.navigate('Explore');
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
 
@@ -221,6 +229,9 @@ const LoginScreen = ({navigation, gooleSignin}) => {
 
     startOtpListener(message => {
       // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
+      if (!sendOTP) {
+        return;
+      }
       const otp = /(\d{6})/g.exec(message)[1];
       otp.split('').map((item, index) => {
         if (index === 0) {
@@ -240,7 +251,11 @@ const LoginScreen = ({navigation, gooleSignin}) => {
     });
 
     return () => removeListener();
-  }, []);
+  }, [sendOTP]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <KeyboardAvoidingView style={{flex: 1}} behavior="height">
@@ -311,7 +326,7 @@ const LoginScreen = ({navigation, gooleSignin}) => {
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
             <Text className="text-base text-blue-600 font-bold">
-              sign up now
+              Sign up now
             </Text>
           </TouchableOpacity>
         </View>
@@ -425,6 +440,14 @@ const LoginScreen = ({navigation, gooleSignin}) => {
                       setOTP2(text);
                       if (text.length === 1) otp3Ref.current.focus();
                     }}
+                    onKeyPress={({nativeEvent}) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        otp2.length === 0
+                      ) {
+                        otp1Ref.current.focus();
+                      }
+                    }}
                   />
                   <TextInput
                     placeholder=""
@@ -437,6 +460,14 @@ const LoginScreen = ({navigation, gooleSignin}) => {
                     onChangeText={text => {
                       setOTP3(text);
                       if (text.length === 1) otp4Ref.current.focus();
+                    }}
+                    onKeyPress={({nativeEvent}) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        otp3.length === 0
+                      ) {
+                        otp2Ref.current.focus();
+                      }
                     }}
                   />
                   <TextInput
@@ -451,6 +482,14 @@ const LoginScreen = ({navigation, gooleSignin}) => {
                       setOTP4(text);
                       if (text.length === 1) otp5Ref.current.focus();
                     }}
+                    onKeyPress={({nativeEvent}) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        otp4.length === 0
+                      ) {
+                        otp3Ref.current.focus();
+                      }
+                    }}
                   />
                   <TextInput
                     placeholder=""
@@ -464,6 +503,14 @@ const LoginScreen = ({navigation, gooleSignin}) => {
                       setOTP5(text);
                       if (text.length === 1) otp6Ref.current.focus();
                     }}
+                    onKeyPress={({nativeEvent}) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        otp5.length === 0
+                      ) {
+                        otp4Ref.current.focus();
+                      }
+                    }}
                   />
                   <TextInput
                     placeholder=""
@@ -474,6 +521,14 @@ const LoginScreen = ({navigation, gooleSignin}) => {
                     placeholderTextColor="#a3a3a3"
                     keyboardType="number-pad"
                     onChangeText={text => setOTP6(text)}
+                    onKeyPress={({nativeEvent}) => {
+                      if (
+                        nativeEvent.key === 'Backspace' &&
+                        otp6.length === 0
+                      ) {
+                        otp5Ref.current.focus();
+                      }
+                    }}
                   />
                 </View>
               )}

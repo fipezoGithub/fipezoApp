@@ -25,9 +25,7 @@ import {useIsFocused} from '@react-navigation/native';
 import HomeSearch from '../components/HomeSearch';
 import Iconverified from 'react-native-vector-icons/MaterialIcons';
 import {vw, vh} from 'react-native-viewport-units';
-import PushNotification from 'react-native-push-notification';
 import BottomNavBar from '../components/BottomNavBar';
-import Iconexplore from 'react-native-vector-icons/Entypo';
 
 const HomeScreen = ({location, navigation}) => {
   const [allFreelancers, setAllFreelancers] = useState([]);

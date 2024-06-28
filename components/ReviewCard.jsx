@@ -1,6 +1,6 @@
 import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
-import {vw, vh} from 'react-native-viewport-units';
+import {vw} from 'react-native-viewport-units';
 import Iconlike from 'react-native-vector-icons/EvilIcons';
 import Iconstar from 'react-native-vector-icons/AntDesign';
 import {BUCKET_URL} from '@env';

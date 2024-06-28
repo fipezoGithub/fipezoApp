@@ -13,10 +13,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AuthContext} from '../context/AuthContext';
 import {vw, vh} from 'react-native-viewport-units';
 import DocumentPicker from 'react-native-document-picker';
-import {useIsFocused} from '@react-navigation/native';
 
 const UpdateFreelancerPortfolio = ({navigation}) => {
-  const isFocused = useIsFocused();
   const [workImages, setWorkImages] = useState([]);
 
   const selectFile = async index => {

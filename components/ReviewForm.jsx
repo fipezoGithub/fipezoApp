@@ -1,7 +1,7 @@
 import {
   Animated,
   Modal,
-  Pressable,
+  TouchableOpacity,
   StyleSheet,
   Text,
   TextInput,
@@ -11,7 +11,7 @@ import {
 import React, {useState} from 'react';
 import Iconstar from 'react-native-vector-icons/AntDesign';
 import Iconclose from 'react-native-vector-icons/MaterialCommunityIcons';
-import {vw, vh} from 'react-native-viewport-units';
+import {vw} from 'react-native-viewport-units';
 import {SERVER_URL} from '@env';
 import {HelperText} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -104,11 +104,11 @@ const ReviewForm = ({
         className="flex-1 items-center justify-center"
         style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View className="bg-white rounded-xl px-4 py-2 flex flex-col items-start gap-y-4 relative">
-          <Pressable
+          <TouchableOpacity
             className="absolute right-2"
             onPress={() => setShowReviewForm(false)}>
             <Iconclose name="close-thick" size={8 * vw} color="#000" />
-          </Pressable>
+          </TouchableOpacity>
           <View>
             <Text style={{fontSize: 6 * vw}} className="font-bold text-black">
               Give a Feedback
@@ -208,13 +208,15 @@ const ReviewForm = ({
               Description must be greater than 50 chracters
             </HelperText>
           </View>
-          <Pressable className="bg-black rounded-md" onPress={postReview}>
+          <TouchableOpacity
+            className="bg-black rounded-md"
+            onPress={postReview}>
             <Text
               style={{fontSize: 4 * vw}}
               className="text-white font-bold capitalize px-4 py-1">
               submit
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

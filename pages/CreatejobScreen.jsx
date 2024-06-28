@@ -1,10 +1,9 @@
 import {
-  Pressable,
+  TouchableOpacity,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -460,7 +459,7 @@ const CreatedjobScreen = ({navigation}) => {
           className="border border-neutral-400"
         />
       </View>
-      <Pressable
+      <TouchableOpacity
         className="bg-blue-500 px-4 py-2 rounded-md"
         onPress={handelPostJob}>
         <Text
@@ -468,7 +467,7 @@ const CreatedjobScreen = ({navigation}) => {
           className="text-white font-semibold capitalize">
           submit
         </Text>
-      </Pressable>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

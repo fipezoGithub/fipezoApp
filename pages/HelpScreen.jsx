@@ -5,7 +5,7 @@ import {
   TextInput,
   View,
   Linking,
-  Pressable,
+  TouchableOpacity,
   Image,
   BackHandler,
 } from 'react-native';
@@ -224,21 +224,21 @@ const HelpScreen = ({navigation}) => {
               onExpire={onExpire}
               size="normal"
             />
-            <Pressable
+            <TouchableOpacity
               onPress={() => recaptchaRef.current.open()}
               className="bg-gray-500 rounded-lg">
               <Text className="font-bold text-xl text-white text-center py-2">
                 Verify Captcha
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
-          <Pressable
+          <TouchableOpacity
             className="w-60 flex items-center justify-center py-2 bg-violet-600 rounded-3xl self-center"
-            onPress={() => navigation.navigate('TabNav')}>
+            onPress={submitIssue}>
             <Text className="text-lg capitalize text-white font-bold">
               submit
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
         <View className="my-2 mx-4 flex flex-col items-start gap-y-2">
           <Text className="text-xl capitalize font-semibold text-black">
@@ -249,11 +249,11 @@ const HelpScreen = ({navigation}) => {
               If you have any questions, concerns, or feedback, our customer
               support team is ready to assist you. Please email us at
             </Text>
-            <Pressable
+            <TouchableOpacity
               className=""
               onPress={() => sendEmail('mailto:help@fipezo.com')}>
               <Text className="text-lg text-blue-500">help@fipezo.com</Text>
-            </Pressable>
+            </TouchableOpacity>
             <Text className="text-lg text-black">for prompt assistance.</Text>
           </View>
         </View>
@@ -291,7 +291,7 @@ const HelpScreen = ({navigation}) => {
             updates and announcements:
           </Text>
           <View className="flex flex-row items-start gap-x-4">
-            <Pressable
+            <TouchableOpacity
               onPress={() =>
                 sendEmail(
                   'https://www.facebook.com/fipezo/?show_switched_toast=0&show_invite_to_follow=0&show_switched_tooltip=0&show_podcast_settings=0&show_community_review_changes=0&show_community_rollback=0&show_follower_visibility_disclosure=0',
@@ -301,8 +301,8 @@ const HelpScreen = ({navigation}) => {
                 source={require('../assets/facebook.png')}
                 className="w-12 h-12"
               />
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() =>
                 sendEmail('https://www.instagram.com/fipezoindia')
               }>
@@ -310,14 +310,14 @@ const HelpScreen = ({navigation}) => {
                 source={require('../assets/instagramC.png')}
                 className="w-12 h-12"
               />
-            </Pressable>
-            <Pressable
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => sendEmail('https://www.linkedin.com/in/fipezo/')}>
               <Image
                 source={require('../assets/linkedinO.png')}
                 className="w-12 h-12"
               />
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
         <Text className="text-center text-base m-4 text-black">

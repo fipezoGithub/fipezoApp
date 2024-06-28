@@ -9,10 +9,12 @@ import {
 import React, {useContext, useEffect, useState} from 'react';
 import {vw, vh} from 'react-native-viewport-units';
 import DatePicker from 'react-native-date-picker';
+import RazorpayCheckout from 'react-native-razorpay';
 import {AuthContext} from '../context/AuthContext';
-import {SERVER_URL} from '@env';
+import {SERVER_URL, RAZORPAY_KEY} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import socket from '../utils/socket';
+import {HelperText} from 'react-native-paper';
 
 const HireFreelancer = ({route, navigation}) => {
   const [date, setDate] = useState(new Date());
@@ -24,53 +26,113 @@ const HireFreelancer = ({route, navigation}) => {
   const [fullname, setFullname] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [addressError, setAddressError] = useState(false);
   const [budget, setBudget] = useState('');
+  const [budgetError, setBudgetError] = useState(false);
   const [description, setDescription] = useState('');
 
   const {pageData} = route.params;
   const {authData} = useContext(AuthContext);
 
   async function createHireRequest() {
+    if (address.length <= 0) {
+      setAddressError(true);
+      return;
+    }
+    if (budget.length <= 0) {
+      setBudgetError(true);
+      return;
+    }
     try {
       const token = await AsyncStorage.getItem('token');
-      if (token) {
-        const response = await fetch(`${SERVER_URL}/add/hire`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            freelancer: pageData._id,
-            fullname: fullname,
-            phone: phone,
-            description: description,
-            address: address,
-            date: date,
-            startTime: startTime,
-            endTime: endTime,
-            budget: budget,
-          }),
-        });
-        const respdata = await response.json();
-        if (response.ok) {
-          if (authData.userType === 'company') {
-            socket.emit('send-notification', {
-              type: 'Hire',
-              headline: `You have a hire request from ${fullname}`,
-              acceptedFreelancer: pageData._id,
-              sentCompany: authData.userDetails._id,
-              href: '/my_requests',
-            });
-          } else {
-            socket.emit('send-notification', {
-              type: 'Hire',
-              headline: `You have a hire request from ${fullname}`,
-              acceptedFreelancer: pageData._id,
-              sentUser: authData.userDetails._id,
-              href: '/my_requests',
-            });
-          }
+      const razorPay = await RazorpayCheckout.open({
+        description: `Fipezo hire Freelancer at 49/-`,
+        image: 'https://fipezo.com/favi.png',
+        currency: 'INR',
+        key: RAZORPAY_KEY, // Your api key
+        amount: `${49 * 100}`,
+        name: 'Fipezo',
+        prefill: {
+          contact: authData.userDetails.phone,
+          name: authData.userDetails.firstname
+            ? authData.userDetails.firstname + authData.userDetails.lastname
+            : authData.userDetails.companyname,
+        },
+        theme: {color: '#f71942'},
+      });
+
+      let bodyData = {};
+      if (authData.userType === 'company') {
+        bodyData = {
+          company: authData.userDetails._id,
+          fullName: fullname,
+          hired_freelancer: pageData._id,
+          address: address,
+          phone: phone,
+          reuireDate: date,
+          budget: budget,
+          startTime: startTime,
+          endTime: endTime,
+          description: description,
+          transactionId: razorPay.razorpay_payment_id,
+        };
+      } else if (authData.userType === 'user') {
+        bodyData = {
+          user: authData.userDetails._id,
+          fullName: fullname,
+          hired_freelancer: pageData._id,
+          address: address,
+          phone: phone,
+          reuireDate: date,
+          budget: budget,
+          startTime: startTime,
+          endTime: endTime,
+          description: description,
+          transactionId: razorPay.razorpay_payment_id,
+        };
+      } else {
+        bodyData = {
+          freelancer: authData.userDetails._id,
+          fullName: fullname,
+          hired_freelancer: pageData._id,
+          address: address,
+          phone: phone,
+          reuireDate: date,
+          budget: budget,
+          startTime: startTime,
+          endTime: endTime,
+          description: description,
+          transactionId: razorPay.razorpay_payment_id,
+        };
+      }
+
+      const response = await fetch(`${SERVER_URL}/hire/premium`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(bodyData),
+      });
+      const respdata = await response.text();
+
+      if (response.ok) {
+        if (authData.userType === 'company') {
+          socket.emit('send-notification', {
+            type: 'Hire',
+            headline: `You have a hire request from ${fullname}`,
+            acceptedFreelancer: pageData._id,
+            sentCompany: authData.userDetails._id,
+            href: '/my_requests',
+          });
+        } else {
+          socket.emit('send-notification', {
+            type: 'Hire',
+            headline: `You have a hire request from ${fullname}`,
+            acceptedFreelancer: pageData._id,
+            sentUser: authData.userDetails._id,
+            href: '/my_requests',
+          });
         }
       }
       navigation.navigate('my-hire-request');
@@ -84,6 +146,11 @@ const HireFreelancer = ({route, navigation}) => {
       setFullname(authData.userDetails.companyname);
       setPhone(authData.userDetails.companyphone.toString());
     } else if (authData.userType === 'user') {
+      setFullname(
+        authData.userDetails.firstname + ' ' + authData.userDetails.lastname,
+      );
+      setPhone(authData.userDetails.phone.toString());
+    } else {
       setFullname(
         authData.userDetails.firstname + ' ' + authData.userDetails.lastname,
       );
@@ -114,10 +181,26 @@ const HireFreelancer = ({route, navigation}) => {
           <TextInput
             keyboardAppearance="default"
             inputMode="text"
+            editable={false}
             value={fullname}
             onChangeText={text => setFullname(text)}
             placeholder="Enter your name"
-            className="border text-black"
+            className="border text-black rounded-2xl"
+          />
+        </View>
+        <View className="flex flex-col gap-y-2">
+          <Text
+            style={{fontSize: 4 * vw}}
+            className="text-black font-semibold capitalize">
+            freelancer name
+          </Text>
+          <TextInput
+            keyboardAppearance="default"
+            inputMode="text"
+            editable={false}
+            value={pageData.firstname + ' ' + pageData.lastname}
+            placeholder="Enter your name"
+            className="border text-neutral-600 border-neutral-600 rounded-2xl"
           />
         </View>
         <View className="flex flex-col gap-y-2">
@@ -130,9 +213,9 @@ const HireFreelancer = ({route, navigation}) => {
             keyboardAppearance="default"
             inputMode="numeric"
             value={phone}
-            onChangeText={text => setPhone(text)}
+            editable={false}
             placeholder="Enter your phone number"
-            className="border text-black"
+            className="border text-neutral-600 border-neutral-600 rounded-2xl"
           />
         </View>
         <View className="flex flex-col gap-y-2">
@@ -147,8 +230,17 @@ const HireFreelancer = ({route, navigation}) => {
             value={address}
             onChangeText={text => setAddress(text)}
             placeholder="Enter your address"
-            className="border text-black"
+            className="border text-black rounded-2xl"
           />
+          <HelperText
+            type="error"
+            visible={addressError}
+            padding="none"
+            style={{
+              fontSize: 4 * vw,
+            }}>
+            Address can't be empty
+          </HelperText>
         </View>
         <View className="flex flex-col gap-y-2">
           <Text
@@ -160,10 +252,22 @@ const HireFreelancer = ({route, navigation}) => {
             keyboardAppearance="default"
             inputMode="decimal"
             value={budget}
-            onChangeText={text => setBudget(text)}
+            onChangeText={text => {
+              setBudgetError(false);
+              setBudget(text);
+            }}
             placeholder="Enter your budget"
-            className="border text-black"
+            className="border text-black rounded-2xl"
           />
+          <HelperText
+            type="error"
+            visible={budgetError}
+            padding="none"
+            style={{
+              fontSize: 4 * vw,
+            }}>
+            Please provide your estimated budget
+          </HelperText>
         </View>
         <View className="flex flex-col gap-y-2">
           <Text
@@ -177,7 +281,7 @@ const HireFreelancer = ({route, navigation}) => {
             placeholder="Enter your budget"
             value={description}
             onChangeText={text => setDescription(text)}
-            className="border text-black h-28"
+            className="border text-black h-28 rounded-2xl"
             style={{textAlignVertical: 'top'}}
             multiline={true}
           />
@@ -190,7 +294,7 @@ const HireFreelancer = ({route, navigation}) => {
           </Text>
           <TouchableOpacity
             onPress={() => setOpenDate(true)}
-            className="border py-2 px-1">
+            className="border py-2 px-1 rounded-2xl">
             <Text className="text-neutral-600 font-semibold capitalize">
               {date.getDate()}/{date.getMonth() + 1}/{date.getFullYear()}
             </Text>
@@ -217,7 +321,7 @@ const HireFreelancer = ({route, navigation}) => {
           </Text>
           <TouchableOpacity
             onPress={() => setOpenStartTime(true)}
-            className="border py-2 px-1">
+            className="border py-2 px-1 rounded-2xl">
             <Text className="text-neutral-600 font-semibold capitalize">
               {startTime.getHours()}:{startTime.getMinutes()}
             </Text>
@@ -244,7 +348,7 @@ const HireFreelancer = ({route, navigation}) => {
           </Text>
           <TouchableOpacity
             onPress={() => setOpenEndTime(true)}
-            className="border py-2 px-1">
+            className="border py-2 px-1 rounded-2xl">
             <Text className="text-neutral-600 font-semibold capitalize">
               {endTime.getHours()}:{endTime.getMinutes()}
             </Text>
@@ -270,7 +374,7 @@ const HireFreelancer = ({route, navigation}) => {
           <Text
             className="capitalize font-bold text-white px-4 py-2"
             style={{fontSize: 4.5 * vw}}>
-            submit
+            pay & send request
           </Text>
         </TouchableOpacity>
       </View>
