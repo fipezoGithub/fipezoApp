@@ -25,7 +25,7 @@ const GetStartedScreen = ({navigation}) => {
         <TouchableOpacity
           className="bg-violet-600 py-2 flex items-center justify-center rounded-3xl"
           style={{minWidth: 60 * vw}}
-          onPress={({pressed}) => navigation.navigate('Signup')}>
+          onPress={({pressed}) => navigation.navigate('FreelancerSignup')}>
           <Text className="text-white text-xl capitalize">create account</Text>
         </TouchableOpacity>
         <TouchableOpacity

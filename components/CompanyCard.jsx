@@ -9,7 +9,7 @@ const CompanyCard = ({company, navigation}) => {
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('company-profile', {uid: company.uid})}
-      className="flex flex-col items-center justify-center my-4 mx-4 bg-white rounded-lg"
+      className="flex flex-col items-center justify-center m-4 bg-white rounded-lg"
       style={{elevation: 5, width: 90 * vw}}>
       <View
         className="flex items-center justify-center relative"

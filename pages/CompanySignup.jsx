@@ -527,22 +527,42 @@ const CompanySignup = ({navigation, gooleSignin}) => {
 
     startOtpListener(message => {
       // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
-      const otp = /(\d{6})/g.exec(message)[1];
-      otp.split('').map((item, index) => {
-        if (index === 0) {
-          setOTP1(item);
-        } else if (index === 1) {
-          setOTP2(item);
-        } else if (index === 2) {
-          setOTP3(item);
-        } else if (index === 3) {
-          setOTP4(item);
-        } else if (index === 4) {
-          setOTP5(item);
-        } else if (index === 5) {
-          setOTP6(item);
-        }
-      });
+      if (!message) {
+        return;
+      }
+      const match = /(\d{6})/g.exec(message);
+      if (match) {
+        const otp = match[1];
+
+        // Set OTP values to state
+        otp.split('').forEach((item, index) => {
+          switch (index) {
+            case 0:
+              setOTP1(item);
+              break;
+            case 1:
+              setOTP2(item);
+              break;
+            case 2:
+              setOTP3(item);
+              break;
+            case 3:
+              setOTP4(item);
+              break;
+            case 4:
+              setOTP5(item);
+              break;
+            case 5:
+              setOTP6(item);
+              break;
+            default:
+              break;
+          }
+        });
+      } else {
+        // Handle case where no OTP is found
+        console.error('No OTP found in message:', message);
+      }
     });
 
     return () => removeListener();

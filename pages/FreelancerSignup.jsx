@@ -723,22 +723,42 @@ const FreelancerSignup = ({navigation, gooleSignin}) => {
 
     startOtpListener(message => {
       // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
-      const otp = /(\d{6})/g.exec(message)[1];
-      otp.split('').map((item, index) => {
-        if (index === 0) {
-          setOTP1(item);
-        } else if (index === 1) {
-          setOTP2(item);
-        } else if (index === 2) {
-          setOTP3(item);
-        } else if (index === 3) {
-          setOTP4(item);
-        } else if (index === 4) {
-          setOTP5(item);
-        } else if (index === 5) {
-          setOTP6(item);
-        }
-      });
+      if (!message) {
+        return;
+      }
+      const match = /(\d{6})/g.exec(message);
+      if (match) {
+        const otp = match[1];
+
+        // Set OTP values to state
+        otp.split('').forEach((item, index) => {
+          switch (index) {
+            case 0:
+              setOTP1(item);
+              break;
+            case 1:
+              setOTP2(item);
+              break;
+            case 2:
+              setOTP3(item);
+              break;
+            case 3:
+              setOTP4(item);
+              break;
+            case 4:
+              setOTP5(item);
+              break;
+            case 5:
+              setOTP6(item);
+              break;
+            default:
+              break;
+          }
+        });
+      } else {
+        // Handle case where no OTP is found
+        console.error('No OTP found in message:', message);
+      }
     });
 
     return () => removeListener();
@@ -1225,12 +1245,13 @@ const FreelancerSignup = ({navigation, gooleSignin}) => {
                 placeholderTextColor="#a3a3a3"
                 style={{textAlignVertical: 'top'}}
               />
+              <Text>{`${bio.length}/300`}</Text>
               <HelperText
                 type="error"
                 visible={hasErrors.bioError}
                 padding="none"
                 style={{fontSize: 4 * vw}}>
-                Bio should be altleast 300 chracters
+                Bio should be altleast 50 chracters and maximum 300 chracters.
               </HelperText>
             </View>
             <View className="flex flex-col items-stretch gap-y-4">
@@ -1295,6 +1316,7 @@ const FreelancerSignup = ({navigation, gooleSignin}) => {
                 placeholderTextColor="#a3a3a3"
                 style={{textAlignVertical: 'top'}}
               />
+              <Text>{`${equipment.length}/300`}</Text>
               <HelperText
                 type="error"
                 visible={hasErrors.equipmentError}
@@ -1334,7 +1356,7 @@ const FreelancerSignup = ({navigation, gooleSignin}) => {
                   profession === 'graphics_designer') &&
                   'Software Knowledge'}
                 {profession === 'web_developer' && 'Fimiliar Language'} should
-                be altleast 300 chracters
+                be altleast 50 chracters and maximum 300 chracters.
               </HelperText>
             </View>
             <View className="flex flex-row justify-between">
@@ -1533,6 +1555,24 @@ const FreelancerSignup = ({navigation, gooleSignin}) => {
         </TouchableOpacity>
         <TouchableOpacity>
           <Iconfacebook name="facebook" size={48} color="#000000" />
+        </TouchableOpacity>
+      </View>
+      <View className="flex-row gap-1 items-center">
+        <Text className="items-center text-xl font-semibold text-black">
+          Create account as
+        </Text>
+        <TouchableOpacity>
+          <Text className="text-2xl font-semibold capitalize text-blue-600">
+            Company
+          </Text>
+        </TouchableOpacity>
+        <Text className="items-center text-xl font-semibold text-black">
+          or
+        </Text>
+        <TouchableOpacity>
+          <Text className="text-2xl font-semibold capitalize text-blue-600">
+            Client
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -1,5 +1,4 @@
 import {
-  Animated,
   Image,
   ScrollView,
   StyleSheet,
@@ -19,7 +18,7 @@ const FirstScreen = ({navigation}) => {
   const setNewUser = async () => {
     try {
       await AsyncStorage.setItem('newUser', 'true');
-      navigation.navigate('GetStarted');
+      navigation.navigate('Explore');
     } catch (error) {
       console.log(error);
     }
@@ -35,8 +34,6 @@ const FirstScreen = ({navigation}) => {
     const nextIndex = currentPage + 1 < 3 ? currentPage + 1 : 0;
     scroll.current.scrollTo({x: nextIndex * (100 * vw), animated: true});
   };
-
-  const rightArrow = <Icon name="right" size={30} color="#900" />;
 
   return (
     <View
@@ -111,20 +108,6 @@ const FirstScreen = ({navigation}) => {
         </ScrollView>
       </View>
       <View className="self-end flex flex-row items-center justify-between w-full">
-        {/* {pos > 385 && (
-          <TouchableOpacity
-            onPress={() => {
-              if (scrollPos > 600) {
-                scroll.current.scrollTo({x: scrollPos - 385, animated: true});
-                setScrollPos(scrollPos - 385);
-              } else {
-                scroll.current.scrollTo({x: 0, animated: true});
-                setScrollPos(0);
-              }
-            }}>
-            <Text className="text-2xl">back</Text>
-          </TouchableOpacity>
-        )} */}
         <View className="flex flex-row items-center gap-2 ml-4">
           <View
             className={
